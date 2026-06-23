@@ -18,7 +18,6 @@ export function useNotationConverter(config?: ConverterConfig) {
   const convert = useCallback(
     async (input: ConvertInput, opts: ConvertOptions): Promise<ConvertResult> => {
       setError(null);
-      setResult(null);
       setStatus('converting');
       try {
         const r = await converter.convert(input, { ...opts, onProgress: setProgress });

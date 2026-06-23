@@ -9,9 +9,12 @@ const fakeResult = {
   filename: 'song.gp',
   warnings: [] as string[],
 };
+
+let mockConvert = vi.fn().mockResolvedValue(fakeResult);
+
 vi.mock('notation-converter', () => ({
   createConverter: () => ({
-    convert: vi.fn().mockResolvedValue(fakeResult),
+    convert: mockConvert,
     detectFormat: vi.fn().mockResolvedValue('musicxml'),
     canConvert: () => true,
     getMatrix: () => [
@@ -25,7 +28,10 @@ vi.mock('notation-converter', () => ({
 import { useNotationConverter } from '../src/useNotationConverter';
 
 describe('useNotationConverter', () => {
-  beforeEach(() => vi.clearAllMocks());
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockConvert = vi.fn().mockResolvedValue(fakeResult);
+  });
 
   it('starts idle', () => {
     const { result } = renderHook(() => useNotationConverter());
@@ -46,5 +52,19 @@ describe('useNotationConverter', () => {
     const { result } = renderHook(() => useNotationConverter());
     expect(result.current.needsHeavyEngine('midi', 'gp')).toBe(true);
     expect(result.current.needsHeavyEngine('musicxml', 'gp')).toBe(false);
+  });
+
+  it('sets error status when convert rejects', async () => {
+    const testError = new Error('Conversion failed');
+    mockConvert.mockRejectedValueOnce(testError);
+    const { result } = renderHook(() => useNotationConverter());
+    await act(async () => {
+      await expect(
+        result.current.convert(new Uint8Array([0]), { to: 'gp' }),
+      ).rejects.toThrow('Conversion failed');
+    });
+    expect(result.current.status).toBe('error');
+    expect(result.current.error).toBeInstanceOf(Error);
+    expect(result.current.error?.message).toBe('Conversion failed');
   });
 });
