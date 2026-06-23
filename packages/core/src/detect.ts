@@ -5,6 +5,8 @@ export function detectFormatFromBytes(bytes: Uint8Array, filename?: string): For
   const ext = filename?.toLowerCase().split('.').pop();
 
   if (ext === 'mid' || ext === 'midi') return 'midi';
+  // .mxl/.xml are extension-trusted only (no content validation; .mxl is a zip
+  // container so the magic-byte fallback below cannot detect them).
   if (ext === 'musicxml' || ext === 'xml' || ext === 'mxl') return 'musicxml';
   if (ext === 'gp' || ext === 'gpx' || /^gp[3-5]$/.test(ext ?? '')) return 'gp';
 

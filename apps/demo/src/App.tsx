@@ -12,7 +12,7 @@ export function App() {
   const onDownload = () => {
     if (!result) return;
     const url = URL.createObjectURL(
-      new Blob([result.data as unknown as BlobPart], { type: result.mimeType }),
+      new Blob([result.data], { type: result.mimeType }),
     );
     const a = document.createElement('a');
     a.href = url;

@@ -6,7 +6,7 @@ import { detectFormat, detectFormatFromBytes } from './detect';
 import { ROUTES, routeKey } from './matrix';
 import { musicxmlToGp } from './engines/alphatab';
 
-type ConvertFn = (bytes: Uint8Array, opts: ConvertOptions) => Promise<Uint8Array> | Uint8Array;
+type ConvertFn = (bytes: Uint8Array, opts: ConvertOptions) => Promise<Uint8Array<ArrayBuffer>> | Uint8Array<ArrayBuffer>;
 
 const MIME: Record<Format, string> = {
   midi: 'audio/midi',

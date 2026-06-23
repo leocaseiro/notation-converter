@@ -18,7 +18,9 @@ export interface ConvertOptions {
 }
 
 export interface ConvertResult {
-  data: Uint8Array;
+  // Uint8Array<ArrayBuffer> (not the broader ArrayBufferLike) so consumers can
+  // pass `result.data` directly to `new Blob([...])` without an unsafe cast.
+  data: Uint8Array<ArrayBuffer>;
   format: Format;
   mimeType: string;
   filename: string;
