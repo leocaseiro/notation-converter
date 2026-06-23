@@ -1,0 +1,8 @@
+node_modules/
+dist/
+*.tsbuildinfo
+.DS_Store
+# stray vector-DB artifact present in repo root
+vectors/
+# build-time engine assets (Plan 3+)
+apps/demo/public/engines/
