@@ -1,0 +1,28 @@
+{
+  "name": "notation-converter",
+  "version": "0.0.0",
+  "description": "Headless, in-browser music-notation converter (MIDI / MusicXML / Guitar Pro).",
+  "license": "MPL-2.0",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js", "require": "./dist/index.cjs" }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@coderline/alphatab": "^1.8.3"
+  },
+  "devDependencies": {
+    "tsup": "^8.2.0",
+    "vitest": "^2.0.0",
+    "typescript": "^5.5.0"
+  }
+}
