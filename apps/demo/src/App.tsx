@@ -11,11 +11,15 @@ export function App() {
 
   const onDownload = () => {
     if (!result) return;
-    const url = URL.createObjectURL(new Blob([result.data.buffer as ArrayBuffer], { type: result.mimeType }));
+    const url = URL.createObjectURL(
+      new Blob([result.data as unknown as BlobPart], { type: result.mimeType }),
+    );
     const a = document.createElement('a');
     a.href = url;
     a.download = result.filename;
+    document.body.appendChild(a);
     a.click();
+    document.body.removeChild(a);
     URL.revokeObjectURL(url);
   };
 
