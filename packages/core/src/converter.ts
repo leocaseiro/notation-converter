@@ -2,7 +2,7 @@ import type {
   Converter, ConvertInput, ConvertOptions, ConvertResult, ConverterConfig, Format, LoadProgress,
 } from './types';
 import { readInput } from './io';
-import { detectFormat } from './detect';
+import { detectFormat, detectFormatFromBytes } from './detect';
 import { ROUTES, routeKey } from './matrix';
 import { musicxmlToGp } from './engines/alphatab';
 
@@ -39,7 +39,7 @@ export function createConverter(_config: ConverterConfig = {}): Converter {
     },
     async convert(input: ConvertInput, opts: ConvertOptions): Promise<ConvertResult> {
       const { bytes, filename } = await readInput(input);
-      const from = opts.from ?? (await detectFormat(input));
+      const from = opts.from ?? detectFormatFromBytes(bytes, filename);
       if (!from) throw new Error('Could not detect source format; pass opts.from');
       const fn = registry.get(routeKey(from, opts.to));
       if (!fn) throw new Error(`Conversion ${from} -> ${opts.to} is not supported`);

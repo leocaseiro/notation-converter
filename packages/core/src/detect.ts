@@ -1,8 +1,7 @@
 import type { ConvertInput, Format } from './types';
 import { readInput } from './io';
 
-export async function detectFormat(input: ConvertInput): Promise<Format | null> {
-  const { bytes, filename } = await readInput(input);
+export function detectFormatFromBytes(bytes: Uint8Array, filename?: string): Format | null {
   const ext = filename?.toLowerCase().split('.').pop();
 
   if (ext === 'mid' || ext === 'midi') return 'midi';
@@ -17,4 +16,9 @@ export async function detectFormat(input: ConvertInput): Promise<Format | null> 
   if (head.includes('<score-partwise') || head.includes('<score-timewise')) return 'musicxml';
 
   return null;
+}
+
+export async function detectFormat(input: ConvertInput): Promise<Format | null> {
+  const { bytes, filename } = await readInput(input);
+  return detectFormatFromBytes(bytes, filename);
 }
