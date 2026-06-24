@@ -40,8 +40,32 @@ Guitar Pro's *own* MusicXML export wrote `<fret>-1</fret>` / `<fret>-3</fret>` (
 3. `Gp7Exporter().export` → `.gp` bytes.
 4. **Inject GP boilerplate** (#1) into the zip → GP-openable `.gp`.
 
-## Open follow-ups (not in this fix)
-- **Duplication:** GP-exported MusicXML uses `<staves>2</staves>` (notation staff + tab staff, different content) per track → lenient renderers show both. Collapsing the dual staves is a separate, tradeoff-laden step.
+## Known limitation: dual-staff duplication (GP-exported MusicXML only — ACCEPTED 2026-06-24)
+
+Guitar Pro's *own* MusicXML export writes each track as `<staves>2</staves>` — a
+notation staff (voice 1) + a tab staff (voice 5) with **identical notes**. Lenient
+renderers (AlphaTab/Soundslice) show both → "duplicated" tracks. The tab staff
+also carries 4 empty rest-filler voices (so it looks like 5 voices).
+
+**Confirmed GP-export-specific.** Standard MusicXML (Finale/Sibelius/MuseScore/
+music21) converts with correct structure — verified on the standard sample set
+(Mozart, Beethoven, Debussy, Telemann, a 22-instrument orchestral prelude,
+Saltarello): 1 staff per instrument; piano/harp use a legitimate 2-staff grand
+staff (not duplication). **Drum files — notation-hero's core use case — are a
+single staff and are unaffected.**
+
+**Why we don't auto-collapse it:** every attempt to de-dup by mutating AlphaTab's
+model (dropping the redundant staff and/or the empty voices) makes AlphaTab's
+`Gp7Exporter` write invalid `<Voices>-1</Voices>` references → **Guitar Pro
+crashes** (AlphaTab re-reads them fine; GP doesn't). The un-mutated 2-staff output
+opens + plays. A GP-safe de-dup would require direct `.gpif` XML surgery with
+ID-reference cleanup — intricate and high-risk.
+
+**Decision:** ship as-is. The converted `.gp` opens and plays; for GP-exported
+multi-track input it shows duplicated staves. Revisit with `.gpif`-level de-dup if
+it becomes important.
+
+## Other open follow-ups (not in this fix)
 - **AlphaTab display:** user reports the fixed drum `.gp` plays but "can't see the tabs/notation" in AlphaTab — a rendering/display question to investigate.
 - **Coldplay drums:** that file's drum track was exported as *pitched* in the MusicXML (no percussion articulations), so the kit-swap can't apply — its drums stay pitched.
 - The naive skeleton converter assumed clean input; real GP exports are messy. Robustness is now a first-class concern.
