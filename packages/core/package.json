@@ -18,7 +18,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@coderline/alphatab": "^1.8.3"
+    "@coderline/alphatab": "^1.8.3",
+    "fflate": "^0.8.2"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
